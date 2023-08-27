@@ -2,6 +2,8 @@ const Restaurant = require("../models/restaurant.model");
 const restaurantRoute = require("../routes/restaurant.route");
 const objectConverter = require("../utils/object.converter");
 
+//Adding new Restaurant API
+
 module.exports.add = async (req, res) => {
   const restaurantObj = {
     name: req.body.name,
@@ -43,11 +45,13 @@ module.exports.add = async (req, res) => {
   }
 };
 
+//API to fetch all the restaurants listed in App
 module.exports.findAllRestaurant = async (req, res) => {
   try {
     const queryObj = {};
 
     const restaurants = await Restaurant.find(queryObj);
+    //getting info from object converter and storing in a variable
     const response = {
       restaurants: objectConverter.restaurantResponse(restaurants),
       message: `Restaurants fetched successfully`,
@@ -61,6 +65,7 @@ module.exports.findAllRestaurant = async (req, res) => {
   }
 };
 
+//Find restaurant categories
 module.exports.getCategory = async (req, res) => {
   try {
     const response = await Restaurant.distinct("category");
@@ -71,9 +76,10 @@ module.exports.getCategory = async (req, res) => {
     });
   }
 };
-
+//Find restaurants based on category(Takeout/Dineout)
 module.exports.getCategoryName = async (req, res) => {
   try {
+    //checking restaurant categories
     const category = await Restaurant.find({
       category: req.params.categoryName,
     });
@@ -85,8 +91,10 @@ module.exports.getCategoryName = async (req, res) => {
   }
 };
 
+//Find restaurant based on MongoDB ID
 module.exports.getRestaurantByID = async (req, res) => {
   try {
+    //finding restaurant based on ID
     const id = await Restaurant.findById(req.params.id);
     res.status(200).send(id);
   } catch (err) {
@@ -96,9 +104,11 @@ module.exports.getRestaurantByID = async (req, res) => {
   }
 };
 
+//Find restaurant based on ratings
 module.exports.getRestaurantByRating = async (req, res) => {
   try {
     const ratingValue = req.params.ratingValue;
+    //finding all the restaurants with rating greater than or equal to rating passed
     const response = await Restaurant.find({
       rating: { $gte: ratingValue },
     }).exec();
@@ -110,6 +120,7 @@ module.exports.getRestaurantByRating = async (req, res) => {
   }
 };
 
+//Update existing restaurant information
 module.exports.updateRestaurant = async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);
@@ -152,6 +163,8 @@ module.exports.updateRestaurant = async (req, res) => {
     });
   }
 };
+
+//Deleted any restaurant based on ID
 module.exports.deleteRestaurant = async (req, res) => {
   try {
     const deletedRestaurant = await Restaurant.findOneAndDelete({
@@ -176,6 +189,7 @@ module.exports.deleteRestaurant = async (req, res) => {
   }
 };
 
+//Delete all restaurants
 module.exports.deleteAllRestaurant = async (req, res) => {
   try {
     const restaurants = await Restaurant.deleteMany({});
